@@ -3,8 +3,9 @@ const express=require('express')
 const app=express()
 const uuid=require('uuid')
 const port=3000
+app.use(express.json())
 
-const orders = []
+const orders=[]
 
 const checkOrderId=(request, response, next) => {
     const {id}=request.params
@@ -19,8 +20,8 @@ const checkOrderId=(request, response, next) => {
 }
 
 const checkUrl=(request, response, next) => {
-    const url=request.url
-    const method=request.method
+    const url=request.params
+    const method=request.params
 
     console.log(url)
     console.log(method)
@@ -75,52 +76,10 @@ app.get('/order/id', checkOrderId, checkUrl, (request, response) => {
     // essa rota não estar pegando
 })
 
-app.patch('/order/id', checkOrderId, checkUrl, (request, response) => {
-    const index=request.orderIndex
-    const id=request.orderId
-    const updateOrder={id:uuid.v4(), order, name, price, status:"Pronto"}
-
-    orders[index] = updateOrder
-
-    return response.json(updateOrder)
-})
-
-app.delete('/order/:id', (request, response) => {
-    const { id } = request.params
-    const index = orders.findIndex(order => order.id === id)
-
-    if (index < 0) {
-        return response.status(404).json({ message: "User not found" })
-    }
-
-    orders.splice(index, 1)
-
-    return response.status(204).json()
-})
-
-app.get('/order/:id', (request, response) => {
-    const { id } = request.params
-    const index = orders.find(order => order.id === id)
-    const SpecificOrder = index
-
-    if (index < 0) {
-        return response.status(404).json({ message: "User not found" })
-    }
-
-    orders[index] = SpecificOrder
-
-    return response.json(SpecificOrder)
-})
-
-app.patch('/order/:id', (request, response) => {
+app.patch('/order/:id', checkOrderId, checkUrl, (request, response) => {
     try {
-        const { id } = request.params
-        const finishedOrder = { id: uuid.v4(), status: "Pronto" }
-        const index = orders.findIndex(order => order.id === id)
-
-        if (index < 0) {
-            return response.status(404).json({ message: "User not found" })
-        }
+        const index=request.orderIndex
+        const finishedOrder = { id: uuid.v4(), status:"Pronto" }
 
         orders[index] = finishedOrder
 
@@ -132,6 +91,6 @@ app.patch('/order/:id', (request, response) => {
     }
 })
 
-app.listen(port, () => {
+app.listen(port, () =>{
     console.log('🚀🚀🚀🚀🚀')
 })
