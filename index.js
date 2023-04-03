@@ -13,6 +13,7 @@ const checkOrderId=(request, response, next) => {
     if(index<0){
         return response.status(404).json({message:"order not found"})
     }
+    request.orderIndex=index
 
     next()
 }
