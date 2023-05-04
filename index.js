@@ -2,15 +2,17 @@ const { request, response, json } = require('express')
 const express=require('express')
 const app=express()
 const uuid=require('uuid')
-const port=3000
+const cors=require('cors')
+const port=3001
+
 app.use(express.json())
+app.use(cors())
 
 const orders=[]
 
 const checkOrderId=(request, response, next) => {
     const {id}=request.params
     const index=orders.findIndex(order => order.id===id)
-
     if(index<0){
         return response.status(404).json({message:"order not found"})
     }
@@ -34,8 +36,8 @@ app.get('/', (resq, resp) => {
 })
 
 app.post('/order', checkUrl, (request, response) => {
-    const {order, name, price}=request.body
-    const newOrder={id:uuid.v4(), order, name, price, status:"Em preparação"}
+    const {order, name}=request.body
+    const newOrder={id:uuid.v4(), order, name, status:"Em preparação"}
 
     orders.push(newOrder)
     return response.status(201).json(newOrder)
@@ -45,7 +47,7 @@ app.get('/order', checkUrl, (request, response) =>{
     return response.json(orders)
 })
 
-app.put('/orders/:id', checkOrderId, checkUrl, (request, response) => {
+app.put('/order/:id', checkOrderId, checkUrl, (request, response) => {
     const {order, name, price}=request.body
     const index=request.orderIndex
     const id=request.orderIde
@@ -56,7 +58,7 @@ app.put('/orders/:id', checkOrderId, checkUrl, (request, response) => {
     return response.json(updateOrder)
 })
 
-app.delete('/orders/:id', checkOrderId, checkUrl, (request, response) => {
+app.delete('/order/:id', checkOrderId, checkUrl, (request, response) => {
     const index=request.orderIndex
 
     orders.splice(index,1)
@@ -92,5 +94,5 @@ app.patch('/order/:id', checkOrderId, checkUrl, (request, response) => {
 })
 
 app.listen(port, () =>{
-    console.log('🚀🚀🚀🚀🚀')
+    console.log('🚀🚀 Server started on port 3001')
 })
