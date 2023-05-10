@@ -3,10 +3,11 @@ const express=require('express')
 const app=express()
 const uuid=require('uuid')
 const cors=require('cors')
-const port=3001
 
 app.use(express.json())
 app.use(cors())
+
+const port = process.env.PORT || 3001
 
 const orders=[]
 
